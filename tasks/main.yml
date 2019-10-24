@@ -2,16 +2,20 @@
 # tasks file for install-composer
 
 - name: "Check if Composer is already installed. Don't bother installing if so"
-  shell: command -v composer >/dev/null 2>&1
+  shell: command -v composer > /dev/null 2>&1
   register: is_composer_installed
   ignore_errors: yes
+
+#- name: "Debugging is_composer_installed variable"
+#  debug:  
+#    var: is_composer_installed
 
 - name: "Run the Install Composer program on the target machine and saves installed program in the /usr/local/bin folder"
   become: true
   script: ../files/install_composer.sh
   args: 
     creates: /usr/local/bin/composer
-  when: (is_composer_installed.rc == 0) 
+  when: ( is_composer_installed.failed ) 
 
 - name: "Ensure installed composer script is executable"
   become: true
